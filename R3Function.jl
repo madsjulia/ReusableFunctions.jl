@@ -21,4 +21,14 @@ function maker3function(f::Function, dirname::ASCIIString)
 	end
 end
 
+function maker3function(f::Function)
+	d = Dict()
+	function r3f(x)
+		if !haskey(d, x)
+			d[x] = f(x)
+		end
+		return d[x]
+	end
+end
+
 end
