@@ -27,20 +27,20 @@ for fp in [R3Function.maker3function(f, "restart"), R3Function.maker3function(f)
 
 	println("testing with Dict's")
 	println("Should be about 1 second:")
-	d = Dict([1, 2], [3, 4])
+	d = Dict(zip([1, 2], [3, 4]))
 	@time for i = 1:100
 		@assert fp(d) == d
 	end
 
 	println("Should be about 9 seconds:")
 	@time for i = 1:10
-		d = Dict([1, 2], [i, i + 1])
+		d = Dict(zip([1, 2], [i, i + 1]))
 		@assert fp(d) == d
 	end
 
 	println("Should be less than a second:")
 	@time for i = 1:10
-		d = Dict([1, 2], [i, i + 1])
+		d = Dict(zip([1, 2], [i, i + 1]))
 		@assert fp(d) == d
 	end
 	println()

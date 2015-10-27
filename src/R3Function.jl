@@ -1,6 +1,6 @@
 module R3Function
 
-using HDF5, JLD
+import JLD
 
 function maker3function(f::Function, dirname::ASCIIString)
 	if !isdir(dirname)
@@ -11,11 +11,11 @@ function maker3function(f::Function, dirname::ASCIIString)
 		filename = string(dirname, "/", hashstring, ".jld")
 		if isfile(filename)
 			#we've already computed the result for this x, so load it
-			result = load(filename, "result")
+			result = JLD.load(filename, "result")
 		else
 			#we need to compute it for the first time, and save the results
 			result = f(x)
-			save(filename, "result", result, "x", x)
+			JLD.save(filename, "result", result, "x", x)
 		end
 		return result
 	end
