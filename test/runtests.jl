@@ -1,4 +1,4 @@
-import R3Function
+import ReusableFunctions
 
 function f(x)
 	sleep(1)
@@ -7,7 +7,7 @@ end
 
 run(`rm -Rf restart`)
 
-for fp in [R3Function.maker3function(f, "restart"), R3Function.maker3function(f)]
+for fp in [ReusableFunctions.maker3function(f, "restart"), ReusableFunctions.maker3function(f)]
 	println("Testing with ints:")
 	println("Should be about 1 second:")
 	@time for i = 1:100

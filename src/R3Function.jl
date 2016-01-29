@@ -29,7 +29,7 @@ PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE PRIVATELY OWNED
 
 LA-CC-15-080; Copyright Number Assigned: C16008
 """
-module R3Function
+module ReusableFunctions
 
 import JLD
 
