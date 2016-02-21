@@ -1,14 +1,14 @@
 import ReusableFunctions
 
 function f(x)
-	sleep(1)
+	sleep(0.01)
 	return x
 end
 
-run(`rm -Rf restart`)
+run(`rm -Rf ReusableFunctions_restart`)
 
-for fp in [ReusableFunctions.maker3function(f, "restart"), ReusableFunctions.maker3function(f)]
-	println("Testing with ints:")
+for fp in [ReusableFunctions.maker3function(f, "ReusableFunctions_restart"), ReusableFunctions.maker3function(f)]
+	println("Testing with integers:")
 	println("Should be about 1 second:")
 	@time for i = 1:100
 		@assert fp(1) == 1
@@ -25,7 +25,7 @@ for fp in [ReusableFunctions.maker3function(f, "restart"), ReusableFunctions.mak
 	end
 	println()
 
-	println("testing with Dict's")
+	println("Testing with dictionaries")
 	println("Should be about 1 second:")
 	d = Dict(zip([1, 2], [3, 4]))
 	@time for i = 1:100
@@ -45,7 +45,7 @@ for fp in [ReusableFunctions.maker3function(f, "restart"), ReusableFunctions.mak
 	end
 	println()
 
-	println("testing with Float64 arrays")
+	println("Testing with Float64 arrays")
 	println("Should be about 1 second:")
 	v = zeros(10)
 	@time for i = 1:100
@@ -65,3 +65,5 @@ for fp in [ReusableFunctions.maker3function(f, "restart"), ReusableFunctions.mak
 	end
 	println()
 end
+
+run(`rm -Rf ReusableFunctions_restart`)
