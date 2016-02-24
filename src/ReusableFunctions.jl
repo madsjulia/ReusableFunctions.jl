@@ -33,14 +33,19 @@ module ReusableFunctions
 
 import JLD
 
+function gethashfilename(dirname, x)
+	hashstring = string(hash(x))
+	filename = string(dirname, "/", hashstring, ".jld")
+	return filename
+end
+
 "Make reusable function"
 function maker3function(f::Function, dirname::ASCIIString)
 	if !isdir(dirname)
 		mkdir(dirname)
 	end
 	function r3f(x)
-		hashstring = string(hash(x))
-		filename = string(dirname, "/", hashstring, ".jld")
+		filename = gethashfilename(dirname, x)
 		if isfile(filename)
 			#we've already computed the result for this x, so load it
 			result = JLD.load(filename, "result")
@@ -61,6 +66,44 @@ function maker3function(f::Function)
 		end
 		return d[x]
 	end
+end
+
+function maker3function(f::Function, dirname::ASCIIString, paramkeys, resultkeys)
+	if !isdir(dirname)
+		mkdir(dirname)
+	end
+	function r3f(x::Associative)
+		filename = gethashfilename(dirname, x)
+		if isfile(filename)
+			vecresult = JLD.load(filename, "vecresult")
+			if length(vecresult) != length(resultkeys)
+				error("The length of resultkeys does not match the length of the result stored in the file $filename")
+			end
+			result = Dict()
+			i = 1
+			for k in resultkeys
+				result[k] = vecresult[i]
+				i += 1
+			end
+		else
+			result = f(x)
+			vecresult = Array(Float64, length(resultkeys))
+			i = 1
+			for k in resultkeys
+				vecresult[i] = result[k]
+				i += 1
+			end
+			vecx = Array(Float64, length(paramkeys))
+			i = 1
+			for k in paramkeys
+				vecx[i] = x[k]
+				i += 1
+			end
+			JLD.save(filename, "vecresult", vecresult, "vecx", vecx)
+		end
+		return result
+	end
+	return r3f
 end
 
 end
