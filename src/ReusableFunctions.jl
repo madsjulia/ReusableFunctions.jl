@@ -40,7 +40,7 @@ function gethashfilename(dirname, x)
 end
 
 "Make reusable function"
-function maker3function(f::Function, dirname::ASCIIString)
+function maker3function(f, dirname)
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
@@ -62,7 +62,7 @@ function maker3function(f::Function, dirname::ASCIIString)
 	end
 end
 
-function maker3function(f::Function)
+function maker3function(f)
 	d = Dict()
 	function r3f(x)
 		if !haskey(d, x)
@@ -72,7 +72,7 @@ function maker3function(f::Function)
 	end
 end
 
-function maker3function(f::Function, dirname::ASCIIString, paramkeys, resultkeys)
+function maker3function(f, dirname, paramkeys, resultkeys)
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
