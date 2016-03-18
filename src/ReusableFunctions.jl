@@ -42,7 +42,11 @@ end
 "Make reusable function"
 function maker3function(f::Function, dirname::ASCIIString)
 	if !isdir(dirname)
-		mkdir(dirname)
+		try
+			mkdir(dirname)
+		catch
+			warn("Directory $dirname cannot be created")
+		end
 	end
 	function r3f(x)
 		filename = gethashfilename(dirname, x)
@@ -70,7 +74,11 @@ end
 
 function maker3function(f::Function, dirname::ASCIIString, paramkeys, resultkeys)
 	if !isdir(dirname)
-		mkdir(dirname)
+		try
+			mkdir(dirname)
+		catch
+			warn("Directory $dirname cannot be created")
+		end
 	end
 	function r3f(x::Associative)
 		filename = gethashfilename(dirname, x)
