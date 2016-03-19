@@ -45,7 +45,8 @@ function maker3function(f, dirname)
 		try
 			mkdir(dirname)
 		catch
-			warn("Directory $dirname cannot be created")
+			error("Directory $dirname cannot be created")
+			throw("ReusableFunctions quits!")
 		end
 	end
 	function r3f(x)
@@ -77,7 +78,8 @@ function maker3function(f, dirname, paramkeys, resultkeys)
 		try
 			mkdir(dirname)
 		catch
-			warn("Directory $dirname cannot be created")
+			error("Directory $dirname cannot be created")
+			throw("ReusableFunctions quits!")
 		end
 	end
 	function r3f(x::Associative)
