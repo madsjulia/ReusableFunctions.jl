@@ -1,3 +1,4 @@
+using Base.Test
 import ReusableFunctions
 
 function f(x)
@@ -5,88 +6,103 @@ function f(x)
 	return x
 end
 
-run(`rm -Rf ReusableFunctions_restart`)
+restartdir = "ReusableFunctions_restart"
 
-for fp in [ReusableFunctions.maker3function(f, "ReusableFunctions_restart"), ReusableFunctions.maker3function(f)]
-	println("Testing with integers:")
+run(`rm -Rf $restartdir`)
+
+for fp in [ReusableFunctions.maker3function(f, restartdir), ReusableFunctions.maker3function(f)]
 	for i = 1:2
-		@assert fp(1) == 1
+		@test fp(1) == 1
+	end
+	#check to make sure it works if the jld file is corrupted
+	hashfilename = ReusableFunctions.gethashfilename(restartdir, 1)
+	run(`bash -c "echo blah >$hashfilename"`)
+	for i = 1:2
+		@test fp(1) == 1
 	end
 
-	print("Should be about 1 second:")
-	@time for i = 1:10
-		@assert fp(i) == i
+	t = @elapsed for i = 1:10
+		@test fp(i) == i
 	end
+	@test t > 0.5
+	@test t < 2.
 
-	print("Should be less than .1 seconds:")
-	@time for i = 1:10
-		@assert fp(i) == i
+	t = @elapsed for i = 1:10
+		@test fp(i) == i
 	end
+	@test t < 0.1
 
-	println("Testing with dictionaries:")
 	d = Dict(zip([1, 2], [3, 4]))
 	for i = 1:2
-		@assert fp(d) == d
+		@test fp(d) == d
 	end
 
-	print("Should be about 1 second:")
-	@time for i = 1:10
+	t = @elapsed for i = 1:10
 		d = Dict(zip([1, 2], [i, i + 1]))
-		@assert fp(d) == d
+		@test fp(d) == d
 	end
+	@test t > 0.5
+	@test t < 2.
 
-	print("Should be less than .1 seconds:")
-	@time for i = 1:10
+	t = @elapsed for i = 1:10
 		d = Dict(zip([1, 2], [i, i + 1]))
-		@assert fp(d) == d
+		@test fp(d) == d
 	end
+	@test t < 0.1
 
-	println("Testing with Float64 arrays:")
 	v = zeros(10)
 	for i = 1:2
-		@assert fp(v) == v
+		@test fp(v) == v
 	end
 
-	print("Should be about 1 second:")
-	@time for i = 1:10
+	t = @elapsed for i = 1:10
 		v = i * ones(10)
-		@assert fp(v) == v
+		@test fp(v) == v
 	end
+	@test t > 0.5
+	@test t < 2.
 
-	print("Should be less than .1 seconds:")
-	@time for i = 1:10
+	t = @elapsed for i = 1:10
 		v = i * ones(10)
-		@assert fp(v) == v
+		@test fp(v) == v
 	end
+	@test t < 0.1
 end
 
-run(`rm -Rf ReusableFunctions_restart`)
+run(`rm -Rf $restartdir`)
 
 function g(x)
 	sleep(0.1)
 	return Dict("asdf"=>x["a"] - x["b"], "hjkl"=>x["a"] * x["b"])
 end
 
-r3g = ReusableFunctions.maker3function(g, "ReusableFunctions_restart", ["a", "b"], ["asdf", "hjkl"])
-println("testing with Dict->Dict efficient storage")
+r3g = ReusableFunctions.maker3function(g, restartdir, ["a", "b"], ["asdf", "hjkl"])
 d = Dict("a"=>1, "b"=>3)
 r = Dict("asdf"=>-2, "hjkl"=>3)
 for i = 1:2
-	@assert r3g(d) == r
+	@test r3g(d) == r
 end
 
-print("Should be about 1 second:")
-@time for i = 1:10
+#test to make sure it works if the JLD file is corrupted
+hashfilename = ReusableFunctions.gethashfilename(restartdir, d)
+run(`bash -c "echo blah >$hashfilename"`)
+for i = 1:2
+	@test r3g(d) == r
+end
+
+t = @elapsed for i = 1:10
 	d = Dict(zip(["a", "b"], [i, i + 2]))
 	r = Dict("asdf"=>-2, "hjkl"=>i * (i + 2))
-	@assert r3g(d) == r
+	@test r3g(d) == r
 end
+@test t > 0.5
+@test t < 2.
 
-print("Should be less than .1 seconds:")
-@time for i = 1:10
+t = @elapsed for i = 1:10
 	d = Dict(zip(["a", "b"], [i, i + 2]))
 	r = Dict("asdf"=>-2, "hjkl"=>i * (i + 2))
-	@assert r3g(d) == r
+	@test r3g(d) == r
 end
+@test t < 0.1
 
-run(`rm -Rf ReusableFunctions_restart`)
+run(`rm -Rf $restartdir`)

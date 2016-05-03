@@ -46,20 +46,21 @@ function maker3function(f, dirname)
 			mkdir(dirname)
 		catch
 			error("Directory $dirname cannot be created")
-			throw("ReusableFunctions quits!")
 		end
 	end
 	function r3f(x)
 		filename = gethashfilename(dirname, x)
-		if isfile(filename)
-			#we've already computed the result for this x, so load it
+		try#try loading the result
 			result = JLD.load(filename, "result")
-		else
-			#we need to compute it for the first time, and save the results
+			return result
+		catch#if that fails, call the funciton
 			result = f(x)
+			if isfile(filename)
+				rm(filename)
+			end
 			JLD.save(filename, "result", result, "x", x)
+			return result
 		end
-		return result
 	end
 end
 
@@ -79,15 +80,14 @@ function maker3function(f, dirname, paramkeys, resultkeys)
 			mkdir(dirname)
 		catch
 			error("Directory $dirname cannot be created")
-			throw("ReusableFunctions quits!")
 		end
 	end
 	function r3f(x::Associative)
 		filename = gethashfilename(dirname, x)
-		if isfile(filename)
+		try
 			vecresult = JLD.load(filename, "vecresult")
 			if length(vecresult) != length(resultkeys)
-				error("The length of resultkeys does not match the length of the result stored in the file $filename")
+				throw("The length of resultkeys does not match the length of the result stored in the file $filename")
 			end
 			result = Dict()
 			i = 1
@@ -95,7 +95,8 @@ function maker3function(f, dirname, paramkeys, resultkeys)
 				result[k] = vecresult[i]
 				i += 1
 			end
-		else
+			return result
+		catch
 			result = f(x)
 			vecresult = Array(Float64, length(resultkeys))
 			i = 1
@@ -109,9 +110,12 @@ function maker3function(f, dirname, paramkeys, resultkeys)
 				vecx[i] = x[k]
 				i += 1
 			end
+			if isfile(filename)
+				rm(filename)
+			end
 			JLD.save(filename, "vecresult", vecresult, "vecx", vecx)
+			return result
 		end
-		return result
 	end
 	return r3f
 end
