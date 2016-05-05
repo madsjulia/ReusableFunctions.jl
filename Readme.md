@@ -3,7 +3,7 @@ ReusableFunctions (Automated storage and retrieval of results for functions call
 
 [![ReusableFunctions](http://pkg.julialang.org/badges/ReusableFunctions_0.4.svg)](http://pkg.julialang.org/?pkg=ReusableFunctions&ver=0.4)
 
-[![Build Status](https://travis-ci.org/madsjulia/ReusableFunctions.jl.svg?branch=master)](https://travis-ci.org/JuliaLang/ReusableFunctions.jl)
+[![Build Status](https://travis-ci.org/madsjulia/ReusableFunctions.jl.svg?branch=master)](https://travis-ci.org/madsjulia/ReusableFunctions.jl)
 
 [![Coverage Status](https://coveralls.io/repos/madsjulia/ReusableFunctions.jl/badge.svg?branch=master)](https://coveralls.io/r/madsjulia/ReusableFunctions.jl?branch=master)
 
