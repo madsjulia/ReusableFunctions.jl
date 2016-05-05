@@ -1,7 +1,7 @@
 using Base.Test
 import ReusableFunctions
 
-function f(x)
+function freuse(x)
 	sleep(0.1)
 	return x
 end
@@ -10,7 +10,7 @@ restartdir = "ReusableFunctions_restart"
 
 run(`rm -Rf $restartdir`)
 
-for fp in [ReusableFunctions.maker3function(f, restartdir), ReusableFunctions.maker3function(f)]
+for fp in [ReusableFunctions.maker3function(freuse, restartdir), ReusableFunctions.maker3function(freuse)]
 	for i = 1:2
 		@test fp(1) == 1
 	end
@@ -71,12 +71,12 @@ end
 
 run(`rm -Rf $restartdir`)
 
-function g(x)
+function greuse(x)
 	sleep(0.1)
 	return Dict("asdf"=>x["a"] - x["b"], "hjkl"=>x["a"] * x["b"])
 end
 
-r3g = ReusableFunctions.maker3function(g, restartdir, ["a", "b"], ["asdf", "hjkl"])
+r3g = ReusableFunctions.maker3function(greuse, restartdir, ["a", "b"], ["asdf", "hjkl"])
 d = Dict("a"=>1, "b"=>3)
 r = Dict("asdf"=>-2, "hjkl"=>3)
 for i = 1:2
