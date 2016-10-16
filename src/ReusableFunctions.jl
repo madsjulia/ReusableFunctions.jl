@@ -33,14 +33,15 @@ module ReusableFunctions
 
 import JLD
 
-function gethashfilename(dirname, x)
+"Define a filename based on hash"
+function gethashfilename(dirname::AbstractString, x::Any)
 	hashstring = string(hash(x))
 	filename = string(dirname, "/", hashstring, ".jld")
 	return filename
 end
 
 "Make reusable function"
-function maker3function(f, dirname)
+function maker3function(f::Function, dirname::AbstractString)
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
@@ -64,7 +65,7 @@ function maker3function(f, dirname)
 	end
 end
 
-function maker3function(f)
+function maker3function(f::Function)
 	d = Dict()
 	function r3f(x)
 		if !haskey(d, x)
@@ -74,7 +75,7 @@ function maker3function(f)
 	end
 end
 
-function maker3function(f, dirname, paramkeys, resultkeys)
+function maker3function(f::Function, dirname::AbstractString, paramkeys::Vector, resultkeys::Vector)
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
@@ -87,7 +88,7 @@ function maker3function(f, dirname, paramkeys, resultkeys)
 		try
 			vecresult = JLD.load(filename, "vecresult")
 			if length(vecresult) != length(resultkeys)
-				throw("The length of resultkeys does not match the length of the result stored in the file $filename")
+				throw("The length of resultkeys does not match the length of the result stored in the file $(filename)")
 			end
 			result = Dict()
 			i = 1
