@@ -8,7 +8,9 @@ end
 
 restartdir = "ReusableFunctions_restart"
 
-run(`rm -Rf $restartdir`)
+if isdir(restartdir)
+	rm(restartdir, recursive=true)
+end
 
 for fp in [ReusableFunctions.maker3function(freuse, restartdir), ReusableFunctions.maker3function(freuse)]
 	for i = 1:2
@@ -69,7 +71,9 @@ for fp in [ReusableFunctions.maker3function(freuse, restartdir), ReusableFunctio
 	@test t < 0.1
 end
 
-run(`rm -Rf $restartdir`)
+if isdir(restartdir)
+	rm(restartdir, recursive=true)
+end
 
 function greuse(x)
 	sleep(0.1)
@@ -105,4 +109,6 @@ t = @elapsed for i = 1:10
 end
 @test t < 0.1
 
-run(`rm -Rf $restartdir`)
+if isdir(restartdir)
+	rm(restartdir, recursive=true)
+end
