@@ -34,14 +34,20 @@ module ReusableFunctions
 import JLD
 
 "Define a filename based on hash"
-function gethashfilename(dirname::AbstractString, x::Any)
+function gethashfilename(dirname::String, x::Any)
 	hashstring = string(hash(x))
-	filename = string(dirname, "/", hashstring, ".jld")
+	filename = joinpath(dirname, string(hashstring, ".jld"))
 	return filename
 end
 
-"Make reusable function"
-function maker3function(f::Function, dirname::AbstractString)
+"Check if a file with a filename based on hash exists"
+function checkhashfilename(dirname::String, x::Any)
+	filename = gethashfilename(dirname, x)
+	isfile(filename)
+end
+
+"Make a reusable function"
+function maker3function(f::Function, dirname::String)
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
@@ -49,7 +55,7 @@ function maker3function(f::Function, dirname::AbstractString)
 			error("Directory $dirname cannot be created")
 		end
 	end
-	function r3f(x)
+	function r3f(x::Any)
 		filename = gethashfilename(dirname, x)
 		try#try loading the result
 			result = JLD.load(filename, "result")
@@ -64,18 +70,16 @@ function maker3function(f::Function, dirname::AbstractString)
 		end
 	end
 end
-
 function maker3function(f::Function)
 	d = Dict()
-	function r3f(x)
+	function r3f(x::Any)
 		if !haskey(d, x)
 			d[x] = f(x)
 		end
 		return d[x]
 	end
 end
-
-function maker3function(f::Function, dirname::AbstractString, paramkeys::Vector, resultkeys::Vector)
+function maker3function(f::Function, dirname::String, paramkeys::Vector, resultkeys::Vector)
 	if !isdir(dirname)
 		try
 			mkdir(dirname)

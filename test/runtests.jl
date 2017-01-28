@@ -17,6 +17,7 @@ for fp in [ReusableFunctions.maker3function(freuse, restartdir), ReusableFunctio
 		@test fp(1) == 1
 	end
 	#check to make sure it works if the jld file is corrupted
+    ReusableFunctions.checkhashfilename(restartdir, 1)
 	hashfilename = ReusableFunctions.gethashfilename(restartdir, 1)
 	run(`bash -c "echo blah >$hashfilename"`)
 	for i = 1:2
