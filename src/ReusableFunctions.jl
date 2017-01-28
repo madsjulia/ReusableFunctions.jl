@@ -57,10 +57,10 @@ function maker3function(f::Function, dirname::String)
 	end
 	function r3f(x::Any)
 		filename = gethashfilename(dirname, x)
-		try#try loading the result
+		try # try loading the result
 			result = JLD.load(filename, "result")
 			return result
-		catch#if that fails, call the funciton
+		catch # if that fails, call the funciton
 			result = f(x)
 			if isfile(filename)
 				rm(filename)
