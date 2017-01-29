@@ -56,6 +56,19 @@ function loadresultfile(filename::String)
 	end
 end
 
+"Save JLD result file"
+function saveresultfile(name::String, result::Any, x::Any)
+	if isdir(name)
+		filename = gethashfilename(name, x)
+	else
+		filename = name
+		if isfile(filename)
+			rm(filename)
+		end
+	end
+	JLD.save(filename, "result", result, "x", x)
+end
+
 "Make a reusable function"
 function maker3function(f::Function, dirname::String)
 	if !isdir(dirname)
@@ -70,10 +83,7 @@ function maker3function(f::Function, dirname::String)
 		result = loadresultfile(filename)
 		if result == nothing
 			result = f(x)
-			if isfile(filename)
-				rm(filename)
-			end
-			JLD.save(filename, "result", result, "x", x)
+			saveresultfile(filename, result, x)
 		end
 		return result
 	end
