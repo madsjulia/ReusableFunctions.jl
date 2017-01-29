@@ -47,9 +47,9 @@ function checkhashfilename(dirname::String, x::Any)
 end
 
 "Load JLD result file"
-function loadresultfile(filename::String)
+function loadresultfile(filename::String; key::String="result")
 	try # try loading the result
-		result = JLD.load(filename, "result")
+		result = JLD.load(filename, key)
 		return result
 	catch # if that fails, call the funciton
 		return nothing
@@ -57,7 +57,7 @@ function loadresultfile(filename::String)
 end
 
 "Save JLD result file"
-function saveresultfile(name::String, result::Any, x::Any)
+function saveresultfile(name::String, result::Any, x::Any; keyresult::String="result", keyx::String="x")
 	if isdir(name)
 		filename = gethashfilename(name, x)
 	else
@@ -66,7 +66,7 @@ function saveresultfile(name::String, result::Any, x::Any)
 			rm(filename)
 		end
 	end
-	JLD.save(filename, "result", result, "x", x)
+	JLD.save(filename, keyresult, result, keyx, x)
 end
 
 "Make a reusable function"
@@ -108,7 +108,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 	function r3f(x::Associative)
 		filename = gethashfilename(dirname, x)
 		try
-			vecresult = JLD.load(filename, "vecresult")
+			vecresult = loadresultfile(filename; key="vecresult")
 			if length(vecresult) != length(resultkeys)
 				throw("The length of resultkeys does not match the length of the result stored in the file $(filename)")
 			end
@@ -133,10 +133,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 				vecx[i] = x[k]
 				i += 1
 			end
-			if isfile(filename)
-				rm(filename)
-			end
-			JLD.save(filename, "vecresult", vecresult, "vecx", vecx)
+			saveresultfile(filename, vecresult, vecx; keyresult="vecresult", keyx="vecx")
 			return result
 		end
 	end
