@@ -46,6 +46,16 @@ function checkhashfilename(dirname::String, x::Any)
 	isfile(filename)
 end
 
+"Load JLD result file"
+function loadresultfile(filename::String)
+	try # try loading the result
+		result = JLD.load(filename, "result")
+		return result
+	catch # if that fails, call the funciton
+		return nothing
+	end
+end
+
 "Make a reusable function"
 function maker3function(f::Function, dirname::String)
 	if !isdir(dirname)
@@ -57,17 +67,15 @@ function maker3function(f::Function, dirname::String)
 	end
 	function r3f(x::Any)
 		filename = gethashfilename(dirname, x)
-		try # try loading the result
-			result = JLD.load(filename, "result")
-			return result
-		catch # if that fails, call the funciton
+		result = loadresultfile(filename)
+		if result == nothing
 			result = f(x)
 			if isfile(filename)
 				rm(filename)
 			end
 			JLD.save(filename, "result", result, "x", x)
-			return result
 		end
+		return result
 	end
 end
 function maker3function(f::Function)
