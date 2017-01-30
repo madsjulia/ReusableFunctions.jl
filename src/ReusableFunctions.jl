@@ -32,6 +32,7 @@ LA-CC-15-080; Copyright Number Assigned: C16008
 module ReusableFunctions
 
 import JLD
+import Compat
 
 "Define a filename based on hash"
 function gethashfilename(dirname::String, x::Any)
