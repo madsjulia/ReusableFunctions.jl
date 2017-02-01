@@ -33,6 +33,7 @@ module ReusableFunctions
 
 import JLD
 import Compat
+import Compat.String
 
 "Define a filename based on hash"
 function gethashfilename(dirname::String, x::Any)
@@ -108,8 +109,8 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 	end
 	function r3f(x::Associative)
 		filename = gethashfilename(dirname, x)
-		try
-			vecresult = loadresultfile(filename; key="vecresult")
+        vecresult = loadresultfile(filename; key="vecresult")
+		if vecresult != nothing
 			if length(vecresult) != length(resultkeys)
 				throw("The length of resultkeys does not match the length of the result stored in the file $(filename)")
 			end
@@ -120,7 +121,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 				i += 1
 			end
 			return result
-		catch
+		else
 			result = f(x)
 			vecresult = Array(Float64, length(resultkeys))
 			i = 1
