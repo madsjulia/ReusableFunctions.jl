@@ -31,9 +31,15 @@ LA-CC-15-080; Copyright Number Assigned: C16008
 """
 module ReusableFunctions
 
+restarts = 0
+
 import JLD
 import Compat
 import Compat.String
+
+function resetrestarts()
+	global restarts = 0
+end
 
 "Define a filename based on hash"
 function gethashfilename(dirname::String, x::Any)
@@ -86,6 +92,8 @@ function maker3function(f::Function, dirname::String)
 		if result == nothing
 			result = f(x)
 			saveresultfile(filename, result, x)
+		else
+			global restarts += 1
 		end
 		return result
 	end
@@ -120,6 +128,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 				result[k] = vecresult[i]
 				i += 1
 			end
+			global restarts += 1
 			return result
 		else
 			result = f(x)

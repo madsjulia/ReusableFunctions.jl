@@ -1,6 +1,8 @@
 using Base.Test
 import ReusableFunctions
 
+ReusableFunctions.resetrestarts()
+
 function freuse(x)
 	sleep(0.1)
 	return x
