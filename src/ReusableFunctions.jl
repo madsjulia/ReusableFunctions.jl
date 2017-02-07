@@ -32,13 +32,26 @@ LA-CC-15-080; Copyright Number Assigned: C16008
 module ReusableFunctions
 
 restarts = 0
+quiet = true
 
 import JLD
+import DataStructures
 import Compat
 import Compat.String
 
+"Reset restart counter"
 function resetrestarts()
 	global restarts = 0
+end
+
+"Make ReusableFunctions quiet"
+function quieton()
+	global quiet = true;
+end
+
+"Make ReusableFunctions not quiet"
+function quietoff()
+	global quiet = false;
 end
 
 "Define a filename based on hash"
@@ -56,10 +69,10 @@ end
 
 "Load JLD result file"
 function loadresultfile(filename::String; key::String="result")
-	try # try loading the result
+	try
 		result = JLD.load(filename, key)
 		return result
-	catch # if that fails, call the funciton
+	catch
 		return nothing
 	end
 end
@@ -89,6 +102,9 @@ function maker3function(f::Function, dirname::String)
 	function r3f(x::Any)
 		filename = gethashfilename(dirname, x)
 		result = loadresultfile(filename)
+		!quiet && @show filename
+		!quiet && @show x
+		!quiet && @show result
 		if result == nothing
 			result = f(x)
 			saveresultfile(filename, result, x)
@@ -99,7 +115,7 @@ function maker3function(f::Function, dirname::String)
 	end
 end
 function maker3function(f::Function)
-	d = Dict()
+	d = DataStructures.OrderedDict()
 	function r3f(x::Any)
 		if !haskey(d, x)
 			d[x] = f(x)
@@ -108,6 +124,8 @@ function maker3function(f::Function)
 	end
 end
 function maker3function(f::Function, dirname::String, paramkeys::Vector, resultkeys::Vector)
+	!quiet && @show paramkeys
+	!quiet && @show resultkeys
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
@@ -117,12 +135,15 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 	end
 	function r3f(x::Associative)
 		filename = gethashfilename(dirname, x)
-        vecresult = loadresultfile(filename; key="vecresult")
+		vecresult = loadresultfile(filename; key="vecresult")
+		!quiet && @show filename
+		!quiet && @show x
+		!quiet && @show vecresult
 		if vecresult != nothing
 			if length(vecresult) != length(resultkeys)
 				throw("The length of resultkeys does not match the length of the result stored in the file $(filename)")
 			end
-			result = Dict()
+			result = DataStructures.OrderedDict()
 			i = 1
 			for k in resultkeys
 				result[k] = vecresult[i]
