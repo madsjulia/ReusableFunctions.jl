@@ -117,7 +117,7 @@ end
 function maker3function(f::Function)
 	d = Dict()
 	function r3f(x...; verbose::Union{Bool, Integer}=0, verbosity::Union{Bool, Integer}=0, quiet::Union{Bool, Integer}=true, kw...)
-		tp = length(kw) > 0 ? x : (x, kw)
+		tp = length(kw) > 0 ? (x, kw) : x
 		if !haskey(d, tp)
 			d[tp] = f(x...; kw...)
 		end
