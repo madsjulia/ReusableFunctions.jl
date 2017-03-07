@@ -90,7 +90,7 @@ function saveresultfile(name::String, result::Any, x::Any; keyresult::String="re
 	JLD.save(filename, keyresult, result, keyx, x)
 end
 
-"Make a reusable function"
+"Make a reusable function expecting both regular and keyword arguments"
 function maker3function(f::Function, dirname::String)
 	if !isdir(dirname)
 		try
@@ -99,14 +99,14 @@ function maker3function(f::Function, dirname::String)
 			error("Directory $dirname cannot be created")
 		end
 	end
-	function r3f(x::Any)
-		filename = gethashfilename(dirname, x)
+	function r3f(x...; verbose::Union{Bool, Integer}=0, verbosity::Union{Bool, Integer}=0, quiet::Union{Bool, Integer}=true, kw...) # dropout expected unimportant keywords such as verbose, verbosity and quiet
+		filename = length(kw) > 0 ? gethashfilename(dirname, (x, kw)) : gethashfilename(dirname, x)
 		result = loadresultfile(filename)
 		!quiet && @show filename
 		!quiet && @show x
 		!quiet && @show result
 		if result == nothing
-			result = f(x)
+			result = f(x...; kw...)
 			saveresultfile(filename, result, x)
 		else
 			global restarts += 1
@@ -115,12 +115,13 @@ function maker3function(f::Function, dirname::String)
 	end
 end
 function maker3function(f::Function)
-	d = DataStructures.OrderedDict()
-	function r3f(x::Any)
-		if !haskey(d, x)
-			d[x] = f(x)
+	d = Dict()
+	function r3f(x...; verbose::Union{Bool, Integer}=0, verbosity::Union{Bool, Integer}=0, quiet::Union{Bool, Integer}=true, kw...)
+		tp = length(kw) > 0 ? x : (x, kw)
+		if !haskey(d, tp)
+			d[tp] = f(x...; kw...)
 		end
-		return d[x]
+		return d[tp]
 	end
 end
 function maker3function(f::Function, dirname::String, paramkeys::Vector, resultkeys::Vector)
