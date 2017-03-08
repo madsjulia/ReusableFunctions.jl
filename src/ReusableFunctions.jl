@@ -91,7 +91,7 @@ function saveresultfile(name::String, result::Any, x::Any; keyresult::String="re
 end
 
 "Make a reusable function expecting both regular and keyword arguments"
-function maker3function(f::Function, dirname::String; ignore_keywordsUnion{String,Array{String,1}}="")
+function maker3function(f::Function, dirname::String; ignore_keywords::Union{String,Array{String,1}}="")
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
@@ -173,6 +173,22 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 	return r3f
 end
 
-function checkfunctionparamters(f::Function, parameters::Union{String,Array{String,1}})
+function checkfunctionkeywords(f::Function, keyword::String)
+	m = methods(f)
+	mp = getfunctionkeywords(f)
+	any(mp .== keyword)
+end
+
+function getfunctionkeywords(f::Function)
+	m = methods(f)
+	mp = Array(String,0)
+	for i in 1:length(m.ms)
+		kwargs = Base.kwarg_decl(m.ms[i].sig, typeof(m.mt.kwsorter))
+		for j in 1:length(kwargs)
+			push!(mp, string(kwargs[j]))
+		end
+	end
+	return sort(unique(mp))
+end
 
 end
