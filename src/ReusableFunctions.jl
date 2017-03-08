@@ -101,13 +101,20 @@ function maker3function(f::Function, dirname::String; ignore_keywords::Array{Str
 		end
 	end
 	function r3f(x...; kw...) # dropout expected unimportant keywords such as verbose, verbosity and quiet
+		kwx = Dict()
+		for k in ignore_keywords
+			if haskey(k, kw)
+				kwx[k] = kw[k]
+				delete!(kw, k)
+			end
+		end
 		filename = length(kw) > 0 ? gethashfilename(dirname, (x, kw)) : gethashfilename(dirname, x)
 		result = loadresultfile(filename)
 		!quiet && @show filename
 		!quiet && @show x
 		!quiet && @show result
 		if result == nothing
-			result = f(x...; kw...)
+			result = f(x...; kw..., kwx...)
 			saveresultfile(filename, result, x)
 		else
 			global restarts += 1
@@ -184,7 +191,12 @@ function getfunctionkeywords(f::Function)
 	m = methods(f)
 	mp = Array(String,0)
 	for i in 1:length(m.ms)
-		kwargs = Base.kwarg_decl(m.ms[i].sig, typeof(m.mt.kwsorter))
+		kwargs = []
+		try
+			kwargs = Base.kwarg_decl(m.ms[i].sig, typeof(m.mt.kwsorter))
+		catch
+			kwargs = []
+		end
 		for j in 1:length(kwargs)
 			push!(mp, string(kwargs[j]))
 		end
