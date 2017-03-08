@@ -91,7 +91,7 @@ function saveresultfile(name::String, result::Any, x::Any; keyresult::String="re
 end
 
 "Make a reusable function expecting both regular and keyword arguments"
-function maker3function(f::Function, dirname::String; ignore_keywords::Array{String, 1}=Array(String, 0))
+function maker3function(f::Function, dirname::String; ignore_keywords::Array{Symbol, 1}=Array(Symbol, 0))
 	ignore_keywords = checkfunctionignore_keywords(f, ignore_keywords)
 	if !isdir(dirname)
 		try
@@ -103,9 +103,11 @@ function maker3function(f::Function, dirname::String; ignore_keywords::Array{Str
 	function r3f(x...; kw...) # dropout expected unimportant keywords such as verbose, verbosity and quiet
 		kwx = Dict()
 		for k in ignore_keywords
-			if haskey(k, kw)
-				kwx[k] = kw[k]
-				delete!(kw, k)
+			for i = 1:length(kw)
+				if kw[i][1] == k
+					kwx[k] = kw[i][2]
+					delete!(kw, i)
+				end
 			end
 		end
 		filename = length(kw) > 0 ? gethashfilename(dirname, (x, kw)) : gethashfilename(dirname, x)
@@ -181,7 +183,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 	return r3f
 end
 
-function checkfunctionkeywords(f::Function, keyword::String)
+function checkfunctionkeywords(f::Function, keyword::Symbol)
 	m = methods(f)
 	mp = getfunctionkeywords(f)
 	any(mp .== keyword)
@@ -189,7 +191,7 @@ end
 
 function getfunctionkeywords(f::Function)
 	m = methods(f)
-	mp = Array(String,0)
+	mp = Array(Symbol, 0)
 	for i in 1:length(m.ms)
 		kwargs = []
 		try
@@ -198,28 +200,30 @@ function getfunctionkeywords(f::Function)
 			kwargs = []
 		end
 		for j in 1:length(kwargs)
-			push!(mp, string(kwargs[j]))
+			push!(mp, kwargs[j])
 		end
 	end
 	return sort(unique(mp))
 end
 
-function checkfunctionignore_keywords(f::Function, ignore_keywords::Array{String, 1}=Array(String, 0))
-	for i = 1:length(ignore_keywords)
-		if ignore_keywords[i] != "" && !checkfunctionkeywords(f, ignore_keywords[i])
+function checkfunctionignore_keywords(f::Function, ignore_keywords::Array{Symbol, 1}=Array(Symbol, 0))
+	i = 1
+	while i <= length(ignore_keywords)
+		if !checkfunctionkeywords(f, ignore_keywords[i])
 			warn("Keyword $(ignore_keywords[i]) not used")
-			ignore_keywords[i] = ""
+			deleteat!(ignore_keywords, i)
 		end
+		i += 1
 	end
-	ignore_keywords_default = ["verbose", "verbosity", "quiet"]
-	for i = 1:length(ignore_keywords_default)
-		if ignore_keywords_default[i] != "" && !checkfunctionkeywords(f, ignore_keywords_default[i])
-			ignore_keywords_default[i] = ""
+	ignore_keywords_default = [:verbose, :verbosity, :quiet]
+	i = 1
+	while i <= length(ignore_keywords_default)
+		if !checkfunctionkeywords(f, ignore_keywords_default[i])
+			deleteat!(ignore_keywords_default, i)
 		end
+		i += 1
 	end
-	k = vcat(ignore_keywords, ignore_keywords_default)
-	i = k .!= ""
-	return k[i]
+	return vcat(ignore_keywords, ignore_keywords_default)
 end
 
 end
