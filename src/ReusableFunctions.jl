@@ -91,7 +91,8 @@ function saveresultfile(name::String, result::Any, x::Any; keyresult::String="re
 end
 
 "Make a reusable function expecting both regular and keyword arguments"
-function maker3function(f::Function, dirname::String; ignore_keywords::Union{String,Array{String,1}}="")
+function maker3function(f::Function, dirname::String; ignore_keywords::Array{String, 1}=Array(String, 0))
+	ignore_keywords = checkfunctionignore_keywords(f, ignore_keywords)
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
@@ -99,7 +100,7 @@ function maker3function(f::Function, dirname::String; ignore_keywords::Union{Str
 			error("Directory $dirname cannot be created")
 		end
 	end
-	function r3f(x...; verbose::Union{Bool, Integer}=0, verbosity::Union{Bool, Integer}=0, quiet::Union{Bool, Integer}=true, kw...) # dropout expected unimportant keywords such as verbose, verbosity and quiet
+	function r3f(x...; kw...) # dropout expected unimportant keywords such as verbose, verbosity and quiet
 		filename = length(kw) > 0 ? gethashfilename(dirname, (x, kw)) : gethashfilename(dirname, x)
 		result = loadresultfile(filename)
 		!quiet && @show filename
@@ -116,7 +117,7 @@ function maker3function(f::Function, dirname::String; ignore_keywords::Union{Str
 end
 function maker3function(f::Function)
 	d = Dict()
-	function r3f(x...; verbose::Union{Bool, Integer}=0, verbosity::Union{Bool, Integer}=0, quiet::Union{Bool, Integer}=true, kw...)
+	function r3f(x...; kw...)
 		tp = length(kw) > 0 ? (x, kw) : x
 		if !haskey(d, tp)
 			d[tp] = f(x...; kw...)
@@ -189,6 +190,24 @@ function getfunctionkeywords(f::Function)
 		end
 	end
 	return sort(unique(mp))
+end
+
+function checkfunctionignore_keywords(f::Function, ignore_keywords::Array{String, 1}=Array(String, 0))
+	for i = 1:length(ignore_keywords)
+		if ignore_keywords[i] != "" && !checkfunctionkeywords(f, ignore_keywords[i])
+			warn("Keyword $(ignore_keywords[i]) not used")
+			ignore_keywords[i] = ""
+		end
+	end
+	ignore_keywords_default = ["verbose", "verbosity", "quiet"]
+	for i = 1:length(ignore_keywords_default)
+		if ignore_keywords_default[i] != "" && !checkfunctionkeywords(f, ignore_keywords_default[i])
+			ignore_keywords_default[i] = ""
+		end
+	end
+	k = vcat(ignore_keywords, ignore_keywords_default)
+	i = k .!= ""
+	return k[i]
 end
 
 end
