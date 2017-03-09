@@ -198,7 +198,7 @@ function getfunctionkeywords(f::Function)
 	catch
 		l = 0
 	end
-	for i in 1:length(m.ms)
+	for i in 1:l
 		kwargs = []
 		try
 			kwargs = Base.kwarg_decl(m.ms[i].sig, typeof(m.mt.kwsorter))
