@@ -192,6 +192,12 @@ end
 function getfunctionkeywords(f::Function)
 	m = methods(f)
 	mp = Array(Symbol, 0)
+	l = 0
+	try
+		l = length(m.ms)
+	catch
+		l = 0
+	end
 	for i in 1:length(m.ms)
 		kwargs = []
 		try
