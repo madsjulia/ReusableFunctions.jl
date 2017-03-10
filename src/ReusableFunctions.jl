@@ -199,14 +199,16 @@ function getfunctionkeywords(f::Function)
 		l = 0
 	end
 	for i in 1:l
-		kwargs = []
+		kwargs = Array(Symbol, 0)
 		try
 			kwargs = Base.kwarg_decl(m.ms[i].sig, typeof(m.mt.kwsorter))
 		catch
-			kwargs = []
+			kwargs = Array(Symbol, 0)
 		end
 		for j in 1:length(kwargs)
-			push!(mp, kwargs[j])
+			if !contains(string(kwargs[j]), "...")
+				push!(mp, kwargs[j])
+			end
 		end
 	end
 	return sort(unique(mp))
