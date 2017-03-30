@@ -32,6 +32,7 @@ LA-CC-15-080; Copyright Number Assigned: C16008
 module ReusableFunctions
 
 restarts = 0
+computes = 0
 quiet = true
 
 import JLD
@@ -39,9 +40,14 @@ import DataStructures
 import Compat
 import Compat.String
 
-"Reset restart counter"
+"Reset restarts counter"
 function resetrestarts()
 	global restarts = 0
+end
+
+"Reset computes counter"
+function resetcomputes()
+	global computes = 0
 end
 
 "Make ReusableFunctions quiet"
@@ -176,6 +182,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 				vecx[i] = x[k]
 				i += 1
 			end
+			global computes += 1
 			saveresultfile(filename, vecresult, vecx; keyresult="vecresult", keyx="vecx")
 			return result
 		end
