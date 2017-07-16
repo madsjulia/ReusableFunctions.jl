@@ -101,8 +101,9 @@ function saveresultfile(name::String, result::Any, x::Any; keyresult::String="re
 	@show typeof(x)
 	@show x
 	=#
-	if !isfile(filename)
-		# JLD.save(filename, keyresult, result, keyx, x) # this crashes v0.6
+	try
+		JLD.save(filename, keyresult, result, keyx, x) # this crashes v0.6
+	catch
 		JLD.save(filename, keyresult, result)
 	end
 end
