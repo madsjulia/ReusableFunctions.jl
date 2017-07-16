@@ -93,7 +93,18 @@ function saveresultfile(name::String, result::Any, x::Any; keyresult::String="re
 			rm(filename)
 		end
 	end
-	JLD.save(filename, keyresult, result, keyx, x)
+	#=
+	@show filename
+	@show keyresult
+	@show result
+	@show keyx
+	@show typeof(x)
+	@show x
+	=#
+	if !isfile(filename)
+		# JLD.save(filename, keyresult, result, keyx, x) # this crashes v0.6
+		JLD.save(filename, keyresult, result)
+	end
 end
 
 "Make a reusable function expecting both regular and keyword arguments"
@@ -123,7 +134,7 @@ function maker3function(f::Function, dirname::String; ignore_keywords::Array{Sym
 		!quiet && @show result
 		if result == nothing
 			result = f(x...; kw..., kwx...)
-			saveresultfile(filename, result, x)
+			saveresultfile(filename, result, x...)
 		else
 			global restarts += 1
 		end
