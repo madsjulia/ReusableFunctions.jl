@@ -130,7 +130,7 @@ function maker3function(f::Function, dirname::String; ignore_keywords::Array{Sym
 		end
 		filename = length(kw) > 0 ? gethashfilename(dirname, (x, kw)) : gethashfilename(dirname, x)
 		result = loadresultfile(filename)
-		!quiet && (@show filename; @show x; @show vecresult)
+		!quiet && (@show filename; @show x; @show result)
 		if result == nothing
 			result = f(x...; kw..., kwx...)
 			saveresultfile(filename, result, x...)
