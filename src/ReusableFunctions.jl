@@ -130,9 +130,7 @@ function maker3function(f::Function, dirname::String; ignore_keywords::Array{Sym
 		end
 		filename = length(kw) > 0 ? gethashfilename(dirname, (x, kw)) : gethashfilename(dirname, x)
 		result = loadresultfile(filename)
-		!quiet && @show filename
-		!quiet && @show x
-		!quiet && @show result
+		!quiet && (@show filename; @show x; @show vecresult)
 		if result == nothing
 			result = f(x...; kw..., kwx...)
 			saveresultfile(filename, result, x...)
@@ -152,9 +150,8 @@ function maker3function(f::Function)
 		return d[tp]
 	end
 end
-function maker3function(f::Function, dirname::String, paramkeys::Vector, resultkeys::Vector)
-	!quiet && @show paramkeys
-	!quiet && @show resultkeys
+function maker3function(f::Function, dirname::String, paramkeys::Vector, resultkeys::Vector; resultkey::String="vecresult", xkey::String="vecx")
+	!quiet && (@show paramkeys; @show resultkeys)
 	if !isdir(dirname)
 		try
 			mkdir(dirname)
@@ -162,40 +159,61 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 			error("Directory $dirname cannot be created")
 		end
 	end
-	function r3f(x::Associative)
-		filename = gethashfilename(dirname, x)
-		vecresult = loadresultfile(filename; key="vecresult")
-		!quiet && @show filename
-		!quiet && @show x
-		!quiet && @show vecresult
+	function r3f(x::Vector)
+		if length(paramkeys) > 0
+			filename = gethashfilename(dirname, DataStructures.OrderedDict{String, Float64}(zip(paramkeys, x)))
+		else
+			filename = gethashfilename(dirname, x)
+		end
+		vecresult = loadresultfile(filename; key=resultkey)
+		!quiet && (@show filename; @show x; @show vecresult)
 		if vecresult != nothing
 			if length(vecresult) != length(resultkeys)
-				throw("The length of resultkeys does not match the length of the result stored in the file $(filename)")
+				throw("The length of 'resultkeys' does not match the length of the result stored in the file $(filename)")
 			end
 			result = DataStructures.OrderedDict()
-			i = 1
-			for k in resultkeys
+			for (i, k) in enumerate(resultkeys)
 				result[k] = vecresult[i]
-				i += 1
 			end
 			global restarts += 1
 			return result
 		else
 			result = f(x)
 			vecresult = Array{Float64}(length(resultkeys))
-			i = 1
-			for k in resultkeys
+			for (i, k) in enumerate(resultkeys)
 				vecresult[i] = result[k]
-				i += 1
-			end
-			vecx = Array{Float64}(length(paramkeys))
-			i = 1
-			for k in paramkeys
-				vecx[i] = x[k]
-				i += 1
 			end
 			global computes += 1
-			saveresultfile(filename, vecresult, vecx; keyresult="vecresult", keyx="vecx")
+			saveresultfile(filename, vecresult, x; keyresult=resultkey, keyx=xkey)
+			return result
+		end
+	end
+	function r3f(x::Associative)
+		filename = gethashfilename(dirname, x)
+		vecresult = loadresultfile(filename; key=resultkey)
+		!quiet && (@show filename; @show x; @show vecresult)
+		if vecresult != nothing
+			if length(vecresult) != length(resultkeys)
+				throw("The length of 'resultkeys' does not match the length of the result stored in the file $(filename)")
+			end
+			result = DataStructures.OrderedDict()
+			for (i, k) in enumerate(resultkeys)
+				result[k] = vecresult[i]
+			end
+			global restarts += 1
+			return result
+		else
+			result = f(x)
+			vecresult = Array{Float64}(length(resultkeys))
+			for (i, k) in enumerate(resultkeys)
+				vecresult[i] = result[k]
+			end
+			vecx = Array{Float64}(length(paramkeys))
+			for (i, k) in enumerate(paramkeys)
+				vecx[i] = x[k]
+			end
+			global computes += 1
+			saveresultfile(filename, vecresult, vecx; keyresult=resultkey, keyx=xkey)
 			return result
 		end
 	end
