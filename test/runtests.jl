@@ -2,6 +2,9 @@ import Base.Test
 import ReusableFunctions
 
 ReusableFunctions.resetrestarts()
+ReusableFunctions.resetcomputes()
+ReusableFunctions.quietoff()
+ReusableFunctions.quieton()
 
 if !isdefined(Symbol("@stderrcapture"))
 	macro stderrcapture(block)
@@ -25,6 +28,11 @@ end
 	return x
 end
 
+@stderrcapture function freusevector(x::Vector)
+	sleep(0.1)
+	return x
+end
+
 @stderrcapture function greuse(x)
 	sleep(0.1)
 	return Dict("asdf"=>x["a"] - x["b"], "hjkl"=>x["a"] * x["b"])
@@ -37,7 +45,6 @@ if isdir(restartdir)
 end
 
 @Base.Test.testset "Reusable" begin
-
 	for fp in [ReusableFunctions.maker3function(freuse, restartdir), ReusableFunctions.maker3function(freuse)]
 		for i = 1:2
 			@Base.Test.test fp(1) == 1
@@ -100,6 +107,13 @@ end
 
 	if isdir(restartdir)
 		rm(restartdir, recursive=true)
+	end
+
+	v3g = ReusableFunctions.maker3function(freusevector, restartdir)
+	d = [1, 2]
+	r = [1, 2]
+	for i = 1:2
+		@Base.Test.test v3g(d) == r
 	end
 
 	r3g = ReusableFunctions.maker3function(greuse, restartdir, ["a", "b"], ["asdf", "hjkl"])
