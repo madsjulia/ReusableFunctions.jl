@@ -4,7 +4,7 @@ ReusableFunctions
 [![Build Status](https://travis-ci.org/madsjulia/ReusableFunctions.jl.svg?branch=master)](https://travis-ci.org/madsjulia/ReusableFunctions.jl)
 [![Coverage Status](https://coveralls.io/repos/madsjulia/ReusableFunctions.jl/badge.svg?branch=master)](https://coveralls.io/r/madsjulia/ReusableFunctions.jl?branch=master)
 
-Automated storage and retrieval of results for functions calls.
+Automated storage and retrieval of results for Julia functions calls.
 ReusableFunctions is a module of [MADS](http://madsjulia.github.io/Mads.jl).
 
 MADS
