@@ -133,7 +133,7 @@ function maker3function(f::Function, dirname::String; ignore_keywords::Array{Sym
 		!quiet && (@show filename; @show x; @show result)
 		if result == nothing
 			result = f(x...; kw..., kwx...)
-			saveresultfile(filename, result, x...)
+			saveresultfile(filename, result, x)
 		else
 			global restarts += 1
 		end
