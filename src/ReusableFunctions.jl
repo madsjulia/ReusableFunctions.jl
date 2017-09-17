@@ -181,7 +181,12 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 			result = f(x)
 			vecresult = Array{Float64}(length(resultkeys))
 			for (i, k) in enumerate(resultkeys)
-				vecresult[i] = result[k]
+				if !haskey(result, k)
+					warn("ReusableFunctions error: Result does not have key $(k)!")
+					warn("ReusableFunctions result: $(result)")
+				else
+					vecresult[i] = result[k]
+				end
 			end
 			global computes += 1
 			saveresultfile(filename, vecresult, x; keyresult=resultkey, keyx=xkey)
@@ -206,7 +211,12 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 			result = f(x)
 			vecresult = Array{Float64}(length(resultkeys))
 			for (i, k) in enumerate(resultkeys)
-				vecresult[i] = result[k]
+				if !haskey(result, k)
+					warn("ReusableFunctions error: Result does not have key $(k)!")
+					warn("ReusableFunctions result: $(result)")
+				else
+					vecresult[i] = result[k]
+				end
 			end
 			vecx = Array{Float64}(length(paramkeys))
 			for (i, k) in enumerate(paramkeys)
