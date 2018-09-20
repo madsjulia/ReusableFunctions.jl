@@ -66,7 +66,7 @@ end
 		t = @elapsed for i = 1:10
 			@Test.test fp(i) == i
 		end
-		@Test.test t < 2. # this is slow under 1.0
+		@Test.test t < 4. # this is slow under 1.0
 
 		d = Dict(zip([1, 2], [3, 4]))
 		for i = 1:2
@@ -84,7 +84,7 @@ end
 			d = Dict(zip([1, 2], [i, i + 1]))
 			@Test.test fp(d) == d
 		end
-		@Test.test t < 2. # this is slow under 1.0
+		@Test.test t < 4. # this is slow under 1.0
 
 		v = zeros(10)
 		for i = 1:2
@@ -102,7 +102,7 @@ end
 			v = i * ones(10)
 			@Test.test fp(v) == v
 		end
-		@Test.test t < 2. # this is slow under 1.0
+		@Test.test t < 4. # this is slow under 1.0
 	end
 
 	if isdir(restartdir)
