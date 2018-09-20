@@ -35,7 +35,8 @@ restarts = 0
 computes = 0
 quiet = true
 
-import JLD
+import JLD2
+import FileIO
 import DataStructures
 import Compat
 import Compat.String
@@ -63,7 +64,7 @@ end
 "Define a filename based on hash"
 function gethashfilename(dirname::String, x::Any)
 	hashstring = string(hash(x))
-	filename = joinpath(dirname, string(hashstring, ".jld"))
+	filename = joinpath(dirname, string(hashstring, ".jld2"))
 	return filename
 end
 
@@ -76,7 +77,7 @@ end
 "Load JLD result file"
 function loadresultfile(filename::String; key::String="result")
 	try
-		result = JLD.load(filename, key)
+		result = FlleIO.load(filename, key)
 		return result
 	catch
 		return nothing
@@ -102,14 +103,14 @@ function saveresultfile(name::String, result::Any, x::Any; keyresult::String="re
 	@show x
 	=#
 	try
-		JLD.save(filename, keyresult, result, keyx, x) # this crashes v0.6
+		FileIO.save(filename, keyresult, result, keyx, x) # this crashes v0.6
 	catch
-		JLD.save(filename, keyresult, result)
+		FileIO.save(filename, keyresult, result)
 	end
 end
 
 "Make a reusable function expecting both regular and keyword arguments"
-function maker3function(f::Function, dirname::String; ignore_keywords::Array{Symbol, 1}=Array{Symbol}(0))
+function maker3function(f::Function, dirname::String; ignore_keywords::Array{Symbol, 1}=Array{Symbol}(undef, 0))
 	ignore_keywords = checkfunctionignore_keywords(f, ignore_keywords)
 	if !isdir(dirname)
 		try
@@ -179,7 +180,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 			return result
 		else
 			result = f(x)
-			vecresult = Array{Float64}(length(resultkeys))
+			vecresult = Array{Float64}(undef, length(resultkeys))
 			for (i, k) in enumerate(resultkeys)
 				if !haskey(result, k)
 					warn("ReusableFunctions error: Result does not have key $(k)!")
@@ -193,7 +194,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 			return result
 		end
 	end
-	function r3f(x::Associative)
+	function r3f(x::AbstractDict)
 		filename = gethashfilename(dirname, x)
 		vecresult = loadresultfile(filename; key=resultkey)
 		!quiet && (@show filename; @show x; @show vecresult)
@@ -209,7 +210,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 			return result
 		else
 			result = f(x)
-			vecresult = Array{Float64}(length(resultkeys))
+			vecresult = Array{Float64}(undef, length(resultkeys))
 			for (i, k) in enumerate(resultkeys)
 				if !haskey(result, k)
 					warn("ReusableFunctions error: Result does not have key $(k)!")
@@ -218,7 +219,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 					vecresult[i] = result[k]
 				end
 			end
-			vecx = Array{Float64}(length(paramkeys))
+			vecx = Array{Float64}(undef, length(paramkeys))
 			for (i, k) in enumerate(paramkeys)
 				vecx[i] = x[k]
 			end
@@ -238,7 +239,7 @@ end
 
 function getfunctionkeywords(f::Function)
 	m = methods(f)
-	mp = Array{Symbol}(0)
+	mp = Array{Symbol}(undef, 0)
 	l = 0
 	try
 		l = length(m.ms)
@@ -246,11 +247,11 @@ function getfunctionkeywords(f::Function)
 		l = 0
 	end
 	for i in 1:l
-		kwargs = Array{Symbol}(0)
+		kwargs = Array{Symbol}(undef, 0)
 		try
 			kwargs = Base.kwarg_decl(m.ms[i].sig, typeof(m.mt.kwsorter))
 		catch
-			kwargs = Array{Symbol}(0)
+			kwargs = Array{Symbol}(undef, 0)
 		end
 		for j in 1:length(kwargs)
 			if !contains(string(kwargs[j]), "...")
@@ -261,7 +262,7 @@ function getfunctionkeywords(f::Function)
 	return sort(unique(mp))
 end
 
-function checkfunctionignore_keywords(f::Function, ignore_keywords::Array{Symbol, 1}=Array{Symbol}(0))
+function checkfunctionignore_keywords(f::Function, ignore_keywords::Array{Symbol, 1}=Array{Symbol}(undef, 0))
 	i = 1
 	while i <= length(ignore_keywords)
 		if !checkfunctionkeywords(f, ignore_keywords[i])

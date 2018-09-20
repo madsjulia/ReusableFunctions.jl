@@ -1,4 +1,5 @@
-julia 0.6
+julia 0.7
 Compat 0.8
 DataStructures
-JLD
+JLD2
+FileIO
