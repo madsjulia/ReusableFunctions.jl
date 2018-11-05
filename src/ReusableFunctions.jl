@@ -39,6 +39,7 @@ import JLD2
 import FileIO
 import DataStructures
 import Compat
+import Suppressor
 import Compat.String
 
 "Reset restarts counter"
@@ -77,7 +78,7 @@ end
 "Load JLD result file"
 function loadresultfile(filename::String; key::String="result")
 	try
-		result = FileIO.load(filename, key)
+		@Suppressor.suppress result = FileIO.load(filename, key)
 		return result
 	catch
 		return nothing
