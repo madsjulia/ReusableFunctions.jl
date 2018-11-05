@@ -123,6 +123,9 @@ end
 		@Test.test r3g(d) == r
 	end
 
+	@Test.test ReusableFunctions.computes == 1
+	@Test.test ReusableFunctions.restarts == 39
+
 	#test to make sure it works if the JLD file is corrupted
 	hashfilename = ReusableFunctions.gethashfilename(restartdir, d)
 	run(`bash -c "echo blah >$hashfilename"`)
@@ -144,6 +147,9 @@ end
 		@Test.test r3g(d) == r
 	end
 	@Test.test t < 2. # this is slow under 1.0
+
+	@Test.test ReusableFunctions.computes == 11
+	@Test.test ReusableFunctions.restarts == 51
 
 	if isdir(restartdir)
 		rm(restartdir, recursive=true)
