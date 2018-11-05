@@ -77,7 +77,7 @@ end
 "Load JLD result file"
 function loadresultfile(filename::String; key::String="result")
 	try
-		result = FlleIO.load(filename, key)
+		result = FileIO.load(filename, key)
 		return result
 	catch
 		return nothing
