@@ -10,115 +10,57 @@ ReusableFunctions
 Automated storage and retrieval of results for Julia functions calls.
 ReusableFunctions is a module of [MADS](http://madsjulia.github.io/Mads.jl).
 
-MADS
-====
+Installation
+-------------
 
-[MADS](http://madsjulia.github.io/Mads.jl) (Model Analysis & Decision Support) is an integrated open-source high-performance computational (HPC) framework in [Julia](http://julialang.org).
-MADS can execute a wide range of data- and model-based analyses:
+```julia
+import Pkg; Pkg.add("ReusableFunctions")
+```
 
-* Sensitivity Analysis
-* Parameter Estimation
-* Model Inversion and Calibration
-* Uncertainty Quantification
-* Model Selection and Model Averaging
-* Model Reduction and Surrogate Modeling
-* Machine Learning and Blind Source Separation
-* Decision Analysis and Support
+Example
+---------
 
-MADS has been tested to perform HPC simulations on a wide-range multi-processor clusters and parallel environments (Moab, Slurm, etc.).
-MADS utilizes adaptive rules and techniques which allows the analyses to be performed with a minimum user input.
-The code provides a series of alternative algorithms to execute each type of data- and model-based analyses.
+```
+import ReusableFunctions
+function f(x)
+    @info("function f is executed!")
+    sleep(1)
+    return x
+end
+f_reuse = ReusableFunctions.maker3function(f);
+
+julia> f(1) # normal function call
+[ Info: function f is executed!
+1
+
+# function call using ReusableFunctions function
+# the first time f_reuse() is called the original function f() is called
+julia> f_reuse(1)
+[ Info: function f is executed!
+1
+
+# function call using ReusableFunctions function
+# the second time f_reuse() is called he original function f() is NOT called
+# the already stored output from the first call is reported
+julia> f_reuse(1)
+1
+```
 
 Documentation
-=============
+-------------
 
-All the available MADS modules and functions are described at [madsjulia.github.io](http://madsjulia.github.io/Mads.jl)
+ReusableFunctions functions are documented at [https://madsjulia.github.io/Mads.jl/Modules/ReusableFunctions](https://madsjulia.github.io/Mads.jl/Modules/ReusableFunctions)
 
-Installation
-============
+Projects using ReusableFunctions
+-----------------
 
-```julia
-Pkg.add("Mads")
-```
-
-Installation behind a firewall
-------------------------------
-
-Julia uses git for the package management.
-To install Julia packages behind a firewall, add the following lines in the `.gitconfig` file in your home directory:
-
-```git
-[url "https://"]
-        insteadOf = git://
-```
-
-or execute:
-
-```bash
-git config --global url."https://".insteadOf git://
-```
-
-Set proxies:
-
-```bash
-export ftp_proxy=http://proxyout.<your_site>:8080
-export rsync_proxy=http://proxyout.<your_site>:8080
-export http_proxy=http://proxyout.<your_site>:8080
-export https_proxy=http://proxyout.<your_site>:8080
-export no_proxy=.<your_site>
-```
-
-For example, if you are doing this at LANL, you will need to execute the
-following lines in your bash command-line environment:
-
-```bash
-export ftp_proxy=http://proxyout.lanl.gov:8080
-export rsync_proxy=http://proxyout.lanl.gov:8080
-export http_proxy=http://proxyout.lanl.gov:8080
-export https_proxy=http://proxyout.lanl.gov:8080
-export no_proxy=.lanl.gov
-```
-
-MADS examples
-=============
-
-In Julia REPL, do the following commands:
-
-```julia
-import Mads
-```
-
-To explore getting-started instructions, execute:
-
-```julia
-Mads.help()
-```
-
-There are various examples located in the `examples` directory of the `Mads` repository.
-
-For example, execute
-
-```julia
-include(Mads.madsdir * "/../examples/contamination/contamination.jl")
-```
-
-to perform various example analyses related to groundwater contaminant transport, or execute
-
-```julia
-include(Mads.madsdir * "/../examples/bigdt/bigdt.jl")
-```
-
-to perform Bayesian Information Gap Decision Theory (BIG-DT) analysis.
-
-Developers
-==========
-
-* [Velimir (monty) Vesselinov](http://www.lanl.gov/orgs/ees/staff/monty) [(publications)](http://scholar.google.com/citations?user=sIFHVvwAAAAJ)
-* [Daniel O'Malley](http://www.lanl.gov/expertise/profiles/view/daniel-o'malley) [(publications)](http://scholar.google.com/citations?user=rPzCVjEAAAAJ)
-* [see also](https://github.com/madsjulia/ReusableFunctions.jl/graphs/contributors)
+* [MADS](https://github.com/madsjulia)
+* [TensorDecompositions](https://github.com/TensorDecompositions)
 
 Publications, Presentations, Projects
-=====================================
+--------------------------
 
-* [mads.lanl.gov/](http://mads.lanl.gov/)
-* [ees.lanl.gov/monty](http://ees.lanl.gov/monty)
+* [mads.gitlab.io](http://mads.gitlab.io)
+* [TensorDecompositions](https://tensordecompositions.github.io)
+* [monty.gitlab.io](http://monty.gitlab.io)
+* [ees.lanl.gov/monty](https://www.lanl.gov/orgs/ees/staff/monty)

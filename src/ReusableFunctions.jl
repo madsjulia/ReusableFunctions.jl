@@ -232,6 +232,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 	end
 	return r3f
 end
+export maker3function
 
 function checkfunctionkeywords(f::Function, keyword::Symbol)
 	m = methods(f)
