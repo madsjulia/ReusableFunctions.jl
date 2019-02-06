@@ -20,7 +20,7 @@ import Pkg; Pkg.add("ReusableFunctions")
 Example
 ---------
 
-```
+```julia
 import ReusableFunctions
 function f(x)
     @info("function f is executed!")
