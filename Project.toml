@@ -1,6 +1,6 @@
 name = "ReusableFunctions"
 uuid = "afbf81f7-602f-5a4a-9a77-738a1b1188fe"
-version = "0.5.1"
+version = "0.5.2"
 
 [deps]
 Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
