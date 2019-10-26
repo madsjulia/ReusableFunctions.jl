@@ -38,8 +38,6 @@ quiet = true
 import JLD2
 import FileIO
 import DataStructures
-import Compat
-import Compat.String
 
 "Reset restarts counter"
 function resetrestarts()
@@ -62,20 +60,20 @@ function quietoff()
 end
 
 "Define a filename based on hash"
-function gethashfilename(dirname::String, x::Any)
+function gethashfilename(dirname::AbstractString, x::Any)
 	hashstring = string(hash(x))
 	filename = joinpath(dirname, string(hashstring, ".jld2"))
 	return filename
 end
 
 "Check if a file with a filename based on hash exists"
-function checkhashfilename(dirname::String, x::Any)
+function checkhashfilename(dirname::AbstractString, x::Any)
 	filename = gethashfilename(dirname, x)
 	isfile(filename)
 end
 
 "Load JLD result file"
-function loadresultfile(filename::String; key::String="result")
+function loadresultfile(filename::AbstractString; key::AbstractString="result")
 	if !isfile(filename)
 		return nothing
 	end
@@ -87,7 +85,7 @@ function loadresultfile(filename::String; key::String="result")
 end
 
 "Save JLD result file"
-function saveresultfile(name::String, result::Any, x::Any; keyresult::String="result", keyx::String="x")
+function saveresultfile(name::AbstractString, result::Any, x::Any; keyresult::AbstractString="result", keyx::AbstractString="x")
 	if isdir(name)
 		filename = gethashfilename(name, x)
 	else
@@ -112,7 +110,7 @@ function saveresultfile(name::String, result::Any, x::Any; keyresult::String="re
 end
 
 "Make a reusable function expecting both regular and keyword arguments"
-function maker3function(f::Function, dirname::String; ignore_keywords::Array{Symbol, 1}=Array{Symbol}(undef, 0))
+function maker3function(f::Function, dirname::AbstractString; ignore_keywords::Array{Symbol, 1}=Array{Symbol}(undef, 0))
 	ignore_keywords = checkfunctionignore_keywords(f, ignore_keywords)
 	if !isdir(dirname)
 		try
@@ -153,7 +151,7 @@ function maker3function(f::Function)
 		return d[tp]
 	end
 end
-function maker3function(f::Function, dirname::String, paramkeys::Vector, resultkeys::Vector; resultkey::String="vecresult", xkey::String="vecx")
+function maker3function(f::Function, dirname::AbstractString, paramkeys::Vector, resultkeys::Vector; resultkey::AbstractString="vecresult", xkey::AbstractString="vecx")
 	!quiet && (@show paramkeys; @show resultkeys)
 	if !isdir(dirname)
 		try
@@ -164,7 +162,7 @@ function maker3function(f::Function, dirname::String, paramkeys::Vector, resultk
 	end
 	function r3f(x::Vector)
 		if length(paramkeys) > 0
-			filename = gethashfilename(dirname, DataStructures.OrderedDict{String, Float64}(zip(paramkeys, x)))
+			filename = gethashfilename(dirname, DataStructures.OrderedDict{AbstractString, Float64}(zip(paramkeys, x)))
 		else
 			filename = gethashfilename(dirname, x)
 		end
