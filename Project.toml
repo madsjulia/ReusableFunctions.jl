@@ -1,6 +1,6 @@
 name = "ReusableFunctions"
 uuid = "afbf81f7-602f-5a4a-9a77-738a1b1188fe"
-version = "0.7.0"
+version = "1.0.0"
 
 [deps]
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
@@ -9,11 +9,11 @@ JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 
 [compat]
-DataStructures = "^0"
-FileIO = "^1"
-JLD2 = "^0"
-Suppressor = "^0"
-julia = "^1"
+DataStructures = "0.18, 0.19"
+FileIO = "1"
+JLD2 = "0.2, 0.3"
+Suppressor = "0.2, 0.3"
+julia = "1.5"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
