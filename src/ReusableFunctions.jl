@@ -132,7 +132,7 @@ function maker3function(f::Function, dirname::AbstractString; ignore_keywords::A
 		filename = length(kw) > 0 ? gethashfilename(dirname, (x, kw)) : gethashfilename(dirname, x)
 		result = loadresultfile(filename)
 		!quiet && (@show filename; @show x; @show result)
-		if result == nothing
+		if result === nothing
 			result = f(x...; kw..., kwx...)
 			saveresultfile(filename, result, x)
 		else
@@ -168,7 +168,7 @@ function maker3function(f::Function, dirname::AbstractString, paramkeys::Vector,
 		end
 		vecresult = loadresultfile(filename; key=resultkey)
 		!quiet && (@show filename; @show x; @show vecresult)
-		if vecresult != nothing
+		if vecresult !== nothing
 			if length(vecresult) != length(resultkeys)
 				throw("The length of 'resultkeys' does not match the length of the result stored in the file $(filename)")
 			end
@@ -198,7 +198,7 @@ function maker3function(f::Function, dirname::AbstractString, paramkeys::Vector,
 		filename = gethashfilename(dirname, x)
 		vecresult = loadresultfile(filename; key=resultkey)
 		!quiet && (@show filename; @show x; @show vecresult)
-		if vecresult != nothing
+		if vecresult !== nothing
 			if length(vecresult) != length(resultkeys)
 				throw("The length of 'resultkeys' does not match the length of the result stored in the file $(filename)")
 			end
