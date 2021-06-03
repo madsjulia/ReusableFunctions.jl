@@ -151,7 +151,7 @@ function maker3function(f::Function)
 		return d[tp]
 	end
 end
-function maker3function(f::Function, dirname::AbstractString, paramkeys::Vector, resultkeys::Vector; resultkey::AbstractString="vecresult", xkey::AbstractString="vecx")
+function maker3function(f::Function, dirname::AbstractString, paramkeys::AbstractVector, resultkeys::AbstractVector; resultkey::AbstractString="vecresult", xkey::AbstractString="vecx")
 	!quiet && (@show paramkeys; @show resultkeys)
 	if !isdir(dirname)
 		try
@@ -160,7 +160,7 @@ function maker3function(f::Function, dirname::AbstractString, paramkeys::Vector,
 			error("Directory $dirname cannot be created")
 		end
 	end
-	function r3f(x::Vector)
+	function r3f(x::AbstractVector)
 		if length(paramkeys) > 0
 			filename = gethashfilename(dirname, DataStructures.OrderedDict{AbstractString, Float64}(zip(paramkeys, x)))
 		else

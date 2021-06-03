@@ -28,7 +28,7 @@ end
 	return x
 end
 
-@stderrcapture function freusevector(x::Vector)
+@stderrcapture function freusevector(x::AbstractVector)
 	sleep(0.1)
 	return x
 end
