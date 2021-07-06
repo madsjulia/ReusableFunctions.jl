@@ -31,6 +31,14 @@ LA-CC-15-080; Copyright Number Assigned: C16008
 """
 module ReusableFunctions
 
+const rfdir = splitdir(splitdir(pathof(ReusableFunctions))[1])[1]
+
+"Test ReusableFunctions"
+function test()
+	include(joinpath(rfdir, "test", "runtests.jl"))
+end
+
+
 restarts = 0
 computes = 0
 quiet = true
