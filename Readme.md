@@ -45,16 +45,19 @@ Documentation
 
 ReusableFunctions functions are documented at [https://madsjulia.github.io/Mads.jl/Modules/ReusableFunctions](https://madsjulia.github.io/Mads.jl/Modules/ReusableFunctions)
 
-Projects using ReusableFunctions
------------------
+Projects:
+---------
 
 * [MADS](https://github.com/madsjulia)
-* [TensorDecompositions](https://github.com/TensorDecompositions)
+* [SmartTensors](https://github.com/SmartTensors)
+* [SmartML](https://github.com/SmartTensors/SmartML.jl)
 
-Publications, Presentations, Projects
+Publications, Presentations
 --------------------------
 
 * [mads.gitlab.io](http://mads.gitlab.io)
-* [TensorDecompositions](https://tensordecompositions.github.io)
+* [madsjulia.github.io](https://madsjulia.github.io)
+* [SmartTensors](https://SmartTensors.github.io)
+* [SmartTensors.com](https://SmartTensors.com)
 * [monty.gitlab.io](http://monty.gitlab.io)
-* [ees.lanl.gov/monty](https://www.lanl.gov/orgs/ees/staff/monty)
+* [montyv.github.io](https://montyv.github.io)
