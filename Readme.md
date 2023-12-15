@@ -1,5 +1,4 @@
-ReusableFunctions
-=================
+# ReusableFunctions
 
 Automated storage and retrieval of results for Julia functions calls.
 ReusableFunctions is a module of [MADS](http://madsjulia.github.io/Mads.jl).
@@ -34,7 +33,7 @@ julia> f_reuse(1)
 1
 
 # function call using ReusableFunctions function
-# the second time f_reuse() is called he original function f() is NOT called
+# the second time f_reuse() is called the original function f() is NOT called
 # the already stored output from the first call is reported
 julia> f_reuse(1)
 1
