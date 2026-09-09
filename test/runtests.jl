@@ -148,8 +148,9 @@ end
 	end
 	@Test.test t < 2. # this is slow under 1.0
 
-	@Test.test ReusableFunctions.computes == 11
-	@Test.test ReusableFunctions.restarts == 51
+	# The first dictionary in the loop matches the value cached above.
+	@Test.test ReusableFunctions.computes == 10
+	@Test.test ReusableFunctions.restarts == 52
 
 	if isdir(restartdir)
 		rm(restartdir, recursive=true)
